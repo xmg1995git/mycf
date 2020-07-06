@@ -37,8 +37,8 @@ public class UserDo implements Serializable {
     // 密码
     private String password;
 
-    // 类型 0:管理员 1:普通用户
-    private String type;
+    // 头像
+    private String photo;
 
     // 状态 0:无效
     private String status;

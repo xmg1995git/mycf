@@ -17,6 +17,6 @@ public interface IUserLoginMapper {
      * @param user
      * @return
      */
-    @Select("SELECT username,password,nickname,type,landingTime FROM cf_user_info WHERE account = #{account}")
+    @Select("SELECT username,password,nickname,photo,landingTime FROM cf_user_info WHERE account = #{account}")
     UserDo userLogin(UserDo user);
 }

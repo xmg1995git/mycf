@@ -41,12 +41,12 @@ public class ResponseInfo implements Serializable {
         return this;
     }
 
-    public ResponseInfo warning(String code) {
+    public ResponseInfo warning() {
         this.code = WARNING_CODE;
         return this;
     }
 
-    public ResponseInfo warning(String code, Object body) {
+    public ResponseInfo warning(Object body) {
         this.code = WARNING_CODE;
         this.body = body;
         return this;
