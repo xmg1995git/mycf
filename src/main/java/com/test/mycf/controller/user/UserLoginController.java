@@ -4,12 +4,15 @@ import com.test.mycf.common.RedisCommon;
 import com.test.mycf.pojo.ResponseInfo;
 import com.test.mycf.pojo.user.UserDo;
 import com.test.mycf.service.user.IUserService;
+import com.test.mycf.utils.MD5Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -43,6 +46,7 @@ public class UserLoginController {
         String account, password;
         account = user.getAccount();
         password = user.getPassword();
+        password = MD5Util.md5DigestAsHex(password);
         UserDo userDo = (UserDo)redisTemplate.opsForValue().get(account);
         if(userDo == null){
             userDo = userService.userLogin(user);

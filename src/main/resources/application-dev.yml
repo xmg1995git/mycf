@@ -24,5 +24,8 @@ spring:
 #        min-idle: 0
     database: 0
 
+  thymeleaf:
+    cache: false
+
 logging.level.org.springframework.boot.autoconfigure: ERROR
 debug: off

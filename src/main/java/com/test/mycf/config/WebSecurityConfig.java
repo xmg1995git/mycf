@@ -46,19 +46,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
          * 注意：Controller中也对URL配置了权限，如果WebSecurityConfig中和Controller中都对某文化URL配置了权限，则取较小的权限
          */
         http
-                .formLogin()
-                .defaultSuccessUrl("/toHome", false)
+            .formLogin()
+                .defaultSuccessUrl("/", false)
                 .permitAll()
                 .and()
-                .logout()
+            .logout()
                 .permitAll()
                 .and()
-                .rememberMe()
+            .rememberMe()
                 .tokenValiditySeconds(1800)
                 .and()
-                .authorizeRequests()
+            .authorizeRequests()
                 .antMatchers("/toHome", "/toUser")
                 .permitAll()
+                .antMatchers("/general/**").hasAnyRole("GENERAL","ADMIN","SUPER")
+                .antMatchers("/admin/**").hasAnyRole("ADMIN","SUPER")
+                .antMatchers("/super/**").hasRole("SUPER")
                 .anyRequest()
                 .authenticated();
     }

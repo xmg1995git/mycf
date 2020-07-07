@@ -1,7 +1,6 @@
 package com.test.mycf.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import com.test.mycf.utils.MD5Util;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -10,8 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 public class MD5PasswordEncoderConfig implements PasswordEncoder {
 
-
-
     /**
      * 对明文密码加密的方法
      * @param charSequence
@@ -19,7 +16,7 @@ public class MD5PasswordEncoderConfig implements PasswordEncoder {
      */
     @Override
     public String encode(CharSequence charSequence) {
-        return charSequence.toString();
+        return MD5Util.md5DigestAsHex(charSequence);
     }
 
     /**
@@ -30,7 +27,6 @@ public class MD5PasswordEncoderConfig implements PasswordEncoder {
      */
     @Override
     public boolean matches(CharSequence charSequence, String s) {
-
-        return charSequence.equals(s);
+        return s.equals(MD5Util.md5DigestAsHex(charSequence));
     }
 }

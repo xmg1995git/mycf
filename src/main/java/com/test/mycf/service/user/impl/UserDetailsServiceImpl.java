@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -29,9 +30,9 @@ import java.util.concurrent.TimeUnit;
 public class UserDetailsServiceImpl implements UserDetailsService {
     private static final Logger LOG = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    @Autowired
+    @Resource
     private IAuthUserService authUserServiceImpl;
-    @Autowired
+    @Resource
     private RedisTemplate<Object,Object> redisTemplate;
 
     @Override
@@ -44,7 +45,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
              */
             AuthUser authUser = (AuthUser)redisTemplate.opsForValue().get(account);
             if (authUser == null){
-                LOG.info("查询数据库！");
                 authUser = authUserServiceImpl.getAuthUserByAccount(account);
             }
             if(authUser == null) {
