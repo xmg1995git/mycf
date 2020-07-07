@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.Resource;
+
 /**
  * @author ASUS
  * @create 2020/7/6 - 23:57
@@ -17,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
+    @Resource
     private UserDetailsService userDetailsServiceImpl;
 
     /**
@@ -69,7 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         /**
          * BCryptPasswordEncoder：相同的密码明文每次生成的密文都不同，安全性更高
          */
-        return new BCryptPasswordEncoder();
+        return new MD5PasswordEncoderConfig();
     }
 
 

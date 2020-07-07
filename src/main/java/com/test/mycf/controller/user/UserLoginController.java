@@ -4,6 +4,8 @@ import com.test.mycf.common.RedisCommon;
 import com.test.mycf.pojo.ResponseInfo;
 import com.test.mycf.pojo.user.UserDo;
 import com.test.mycf.service.user.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 public class UserLoginController {
+    private static final Logger LOG = LoggerFactory.getLogger(UserLoginController.class);
 
     @Autowired
     private IUserService userService;
@@ -69,5 +72,6 @@ public class UserLoginController {
     public Object getUserDetails(@AuthenticationPrincipal UserDetails userDetails) {
         return userDetails;
     }
+
 
 }
