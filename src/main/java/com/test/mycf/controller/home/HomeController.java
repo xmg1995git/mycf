@@ -12,10 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Controller
 public class HomeController {
 
-    @GetMapping("/toHome")
-    public String index(){
-        return "index";
-    }
+//    @GetMapping("/toHome")
+//    public String index(){
+//        return "index";
+//    }
+//
+//    @GetMapping("/")
+//    public String ul(){
+//        return "login";
+//    }
 
     @GetMapping("/xxx")
     @PreAuthorize("hasRole('ROLE_GENERAL')")

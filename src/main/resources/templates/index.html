@@ -4,12 +4,34 @@
     <title>xx.html</title>
 </head>
 <body>
-<a href="/logout">退出</a>
-<a href="/login">登录</a>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="out">
+</form>
+<a href="/">登录</a>
 
 <h1>我的第一个标题</h1>
 
 <p>我的第一个段落。</p>
-
+<hr>
+<div id="app">
+    <el-button @click="visible = true">Button</el-button>
+    <el-dialog :visible.sync="visible" title="Hello world">
+        <p>Try Element</p>
+    </el-dialog>
+</div>
 </body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- 引入样式 -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function() {
+            return { visible: false }
+        }
+    })
+</script>
 </html>

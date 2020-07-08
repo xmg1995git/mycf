@@ -13,6 +13,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -26,6 +28,34 @@ class MycfApplicationTests {
 
     @Resource
     RedisTemplate<Object, Object> redisTemplate;
+
+    @Resource
+    Executor taskExecutor;
+
+    @Resource
+    ExecutorService executorService;
+
+    @Test
+    public void testexecutorService(){
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(Thread.currentThread().getName()+"executorService");
+            }
+        });
+
+    }
+
+    @Test
+    public void testTaskExecutor(){
+        taskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(Thread.currentThread().getName());
+            }
+        });
+
+    }
 
 
 

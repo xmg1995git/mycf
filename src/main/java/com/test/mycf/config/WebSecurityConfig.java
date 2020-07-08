@@ -47,7 +47,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
          */
         http
             .formLogin()
-                .defaultSuccessUrl("/", false)
+                .loginPage("/")
+                .loginProcessingUrl("/login")
+                .failureUrl("/fail")
+                .defaultSuccessUrl("/index", true)
                 .permitAll()
                 .and()
             .logout()
@@ -57,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenValiditySeconds(1800)
                 .and()
             .authorizeRequests()
-                .antMatchers("/toHome", "/toUser")
+                .antMatchers("/toHome", "/")
                 .permitAll()
                 .antMatchers("/general/**").hasAnyRole("GENERAL","ADMIN","SUPER")
                 .antMatchers("/admin/**").hasAnyRole("ADMIN","SUPER")

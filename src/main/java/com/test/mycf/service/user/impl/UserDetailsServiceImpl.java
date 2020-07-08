@@ -1,6 +1,7 @@
 package com.test.mycf.service.user.impl;
 
 import com.test.mycf.common.RedisCommon;
+import com.test.mycf.common.SessionCommon;
 import com.test.mycf.pojo.user.AuthUser;
 import com.test.mycf.service.user.IAuthUserService;
 import com.test.mycf.service.user.IUserService;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private IAuthUserService authUserServiceImpl;
     @Resource
     private RedisTemplate<Object,Object> redisTemplate;
+    @Resource
+    private HttpSession httpSession;
+
 
     @Override
     public UserDetails loadUserByUsername(String account) throws UsernameNotFoundException {
@@ -58,6 +63,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             /**
              * 创建一个用于认证的用户对象并返回，包括：用户名，密码，角色
              */
+            httpSession.setAttribute(SessionCommon.ACCOUNT,account);
             redisTemplate.opsForValue().set(account,authUser, RedisCommon.SAVE_TIME, TimeUnit.DAYS);
             return new User(authUser.getAccount(), authUser.getPassword(), grantedAuthorities);
         }
