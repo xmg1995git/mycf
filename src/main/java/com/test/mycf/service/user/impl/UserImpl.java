@@ -22,4 +22,9 @@ public class UserImpl implements IUserService {
     public UserDo userLogin(UserDo user) {
         return iUserLoginMapper.userLogin(user);
     }
+
+    @Override
+    public Integer updateLandingTime(String account) {
+        return iUserLoginMapper.updateLandingTime(account);
+    }
 }

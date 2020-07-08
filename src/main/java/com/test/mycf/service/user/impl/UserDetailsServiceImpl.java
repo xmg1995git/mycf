@@ -22,6 +22,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,9 +37,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Resource
     private IAuthUserService authUserServiceImpl;
     @Resource
+    private IUserService userService;
+    @Resource
     private RedisTemplate<Object,Object> redisTemplate;
     @Resource
     private HttpSession httpSession;
+    @Resource
+    private ExecutorService executorService;
 
 
     @Override
@@ -63,8 +69,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             /**
              * 创建一个用于认证的用户对象并返回，包括：用户名，密码，角色
              */
-            httpSession.setAttribute(SessionCommon.ACCOUNT,account);
-            redisTemplate.opsForValue().set(account,authUser, RedisCommon.SAVE_TIME, TimeUnit.DAYS);
+            if(httpSession.getAttribute(SessionCommon.ACCOUNT) == null){
+                executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        userService.updateLandingTime(account);
+                    }
+                });
+                httpSession.setAttribute(SessionCommon.ACCOUNT,account);
+                redisTemplate.opsForValue().set(account,authUser, RedisCommon.SAVE_TIME, TimeUnit.DAYS);
+            }
             return new User(authUser.getAccount(), authUser.getPassword(), grantedAuthorities);
         }
 

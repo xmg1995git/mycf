@@ -14,4 +14,11 @@ public interface IUserService {
      * @return
      */
     UserDo userLogin(UserDo user);
+
+    /**
+     * 保存登录时间
+     * @param account
+     * @return
+     */
+    Integer updateLandingTime(String account);
 }

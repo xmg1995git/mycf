@@ -60,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenValiditySeconds(1800)
                 .and()
             .authorizeRequests()
-                .antMatchers("/toHome", "/")
+                .antMatchers("/toHome", "/", "/webjars/echarts/4.7.0/echarts.min.js")
                 .permitAll()
                 .antMatchers("/general/**").hasAnyRole("GENERAL","ADMIN","SUPER")
                 .antMatchers("/admin/**").hasAnyRole("ADMIN","SUPER")

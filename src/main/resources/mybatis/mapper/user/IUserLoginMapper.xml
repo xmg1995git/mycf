@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mycf.mapper.user.IUserLoginMapper">
+    <select id="userLogin" resultType="UserDo">
+        SELECT username,password,nickname,photo,landingTime
+        FROM cf_user_info
+        WHERE account = #{account}
+    </select>
+
+    <select id="getAuthUserByAccount" resultType="AuthUser">
+        SELECT u.id, u.account, password, photo, role, nickname, landingTime
+        FROM
+        cf_user_info u JOIN cf_user_role r ON u.account = r.account
+        WHERE
+        r.STATUS = '1' AND u.STATUS = '1' AND u.account = #{account}
+    </select>
+</mapper>

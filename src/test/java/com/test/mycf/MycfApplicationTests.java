@@ -3,6 +3,8 @@ package com.test.mycf;
 import com.test.mycf.pojo.user.UserDo;
 import com.test.mycf.service.user.IUserService;
 import com.test.mycf.service.user.impl.UserImpl;
+import javafx.beans.binding.When;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -36,13 +37,28 @@ class MycfApplicationTests {
     ExecutorService executorService;
 
     @Test
-    public void testexecutorService(){
-        executorService.execute(new Runnable() {
+    public void testexecutorService() throws ExecutionException, InterruptedException {
+        Future<Object> submit1 = executorService.submit(new Callable<Object>() {
             @Override
-            public void run() {
-                System.out.println(Thread.currentThread().getName()+"executorService");
+            public Object call() throws Exception {
+                return "hello mycf!";
             }
         });
+        System.out.println(submit1.get());
+        Future<Integer> submit = executorService.submit(new Runnable() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                for (int i = 0; i < 3; i++) {
+                    Thread.sleep(2000);
+                    System.out.println(i);
+                }
+            }
+        }, 100);
+        for (int i = 0; i < 9; i++) {
+            System.out.println(Thread.currentThread().getName());
+        }
+        System.out.println(submit.get());
 
     }
 
