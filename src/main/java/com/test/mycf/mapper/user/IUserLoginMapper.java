@@ -12,7 +12,6 @@ import org.apache.ibatis.annotations.Update;
  */
 public interface IUserLoginMapper {
 
-
     /**
      * 通过用户账号获取认证用户信息
      */

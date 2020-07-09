@@ -16,6 +16,8 @@ import java.util.Date;
 @Data
 public class UserDo implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     // 主键
     private String id;
 

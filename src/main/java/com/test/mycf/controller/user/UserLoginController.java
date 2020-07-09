@@ -77,5 +77,10 @@ public class UserLoginController {
         return userDetails;
     }
 
+//    @GetMapping("/aaa")
+//    public Object gdetPrincipal(){
+//        userService.
+//        return principal;
+//    }
 
 }

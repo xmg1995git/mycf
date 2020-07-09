@@ -1,5 +1,6 @@
 package com.test.mycf;
 
+import com.test.mycf.mapper.user.IUserLoginMapper;
 import com.test.mycf.pojo.user.UserDo;
 import com.test.mycf.service.user.IUserService;
 import com.test.mycf.service.user.impl.UserImpl;
@@ -35,6 +36,17 @@ class MycfApplicationTests {
 
     @Resource
     ExecutorService executorService;
+
+    @Resource
+    private IUserLoginMapper iUserLoginMapper;
+
+    @Test
+    public void testMybatis() {
+        System.out.println(iUserLoginMapper.getAuthUserByAccount("admin"));
+        UserDo u = new UserDo();
+        u.setAccount("admin");
+        System.out.println(iUserLoginMapper.userLogin(u));
+    }
 
     @Test
     public void testexecutorService() throws ExecutionException, InterruptedException {
