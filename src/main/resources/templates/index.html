@@ -3,14 +3,16 @@
     <meta charset="UTF-8">
     <title>xx.html</title>
 </head>
-<body>
+<body class="text-center">
+<strong><span th:text="${session.USER_ACCOUNT+'!'}"></span></strong>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="out">
 </form>
+<img class="mb-4" src="img/jd.jpg" alt="" width="72" height="72">
 <a href="/">登录</a>
 
 <h1>我的第一个标题</h1>
-
+<img class="mb-4" th:src="@{/img/bootstrap-solid.svg}" alt="" width="72" height="72">
 <p>我的第一个段落。</p>
 <hr>
 <div id="app">
@@ -19,19 +21,20 @@
         <p>Try Element</p>
     </el-dialog>
 </div>
+
+<div th:fragment="webjars">
+<!--    <script src="/webjars/vue/2.5.16/vue.js"></script>-->
+<!--    <link rel="stylesheet" href="/webjars/element-ui/2.13.0/lib/theme-chalk/index.css">-->
+<!--    <script src="/webjars/element-ui/2.13.0/lib/index.js"></script>-->
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.0.0/css/bootstrap.min.css" >
+    <script src="/webjars/echarts/4.7.0/echarts.min.js"></script>
+</div>
+
 </body>
-<!-- import Vue before Element -->
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
-<!-- 引入样式 -->
-<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-<!-- 引入组件库 -->
-<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
 <script>
-    new Vue({
-        el: '#app',
-        data: function() {
-            return { visible: false }
-        }
-    })
+
 </script>
 </html>

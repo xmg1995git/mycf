@@ -3,23 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>login</title>
+    <link href="static/css/login.css" rel="stylesheet">
+    <style>
+        #login{
+            width: 200px;
+            height: 400px;
+            margin: 0 auto;
+            /*background-color: burlywood;*/
+        }
+    </style>
 </head>
-<script src="/webjars/echarts/4.7.0/echarts.min.js"></script>
 <body>
-自定义表单验证:
-<form th:action="@{/login}" method="post">
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
-    </div>
-    <div class="form-group">
-        <label for="Password">Password:</label>
-        <input type="password" class="form-control" id="Password" name="password" placeholder="Enter password">
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-<div id="main" style="width: 600px;height:400px;"></div>
+
+<!--&lt;!&ndash; 为ECharts准备一个具备大小（宽高）的Dom &ndash;&gt;-->
+<!--<div id="main" style="width: 300px;height:200px;"></div>-->
+<hr>
+<div id="login" class="text-center">
+    <form class="form-signin" th:action="@{/login}" method="post">
+        <img class="mb-4" src="img/jd.jpg" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+        <label for="inputEmail" class="sr-only">Account</label>
+        <input name="username" style="width:200px; text-align: center; "type="text" id="inputEmail" class="form-control " placeholder="Account" required >
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input name="password" style="width:200px; text-align: center; " type="password" id="inputPassword" class="form-control " placeholder="Password" required>
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" name="remember-me" value="true"> Remember me
+            </label>
+        </div>
+        <button style="width:200px; text-align: center;" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2020-07-09</p>
+    </form>
+</div>
+
+
+
+<div th:replace="~{index::webjars}"></div>
 </body>
 <script type="text/javascript">
 
