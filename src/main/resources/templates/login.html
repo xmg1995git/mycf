@@ -16,14 +16,14 @@
 <body>
 
 <!--&lt;!&ndash; 为ECharts准备一个具备大小（宽高）的Dom &ndash;&gt;-->
-<!--<div id="main" style="width: 300px;height:200px;"></div>-->
+<div id="main" style="width: 300px;height:200px;"></div>
 <hr>
 <div id="login" class="text-center">
     <form class="form-signin" th:action="@{/login}" method="post">
         <img class="mb-4" src="img/jd.jpg" alt="" width="72" height="72">
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
         <label for="inputEmail" class="sr-only">Account</label>
-        <input name="username" style="width:200px; text-align: center; "type="text" id="inputEmail" class="form-control " placeholder="Account" required >
+        <input name="username" th:value="${session.USER_ACCOUNT}" style="width:200px; text-align: center; "type="text" id="inputEmail" class="form-control " placeholder="Account" required >
         <label for="inputPassword" class="sr-only">Password</label>
         <input name="password" style="width:200px; text-align: center; " type="password" id="inputPassword" class="form-control " placeholder="Password" required>
         <div class="checkbox mb-3">
@@ -31,17 +31,73 @@
                 <input type="checkbox" name="remember-me" value="true"> Remember me
             </label>
         </div>
-        <button style="width:200px; text-align: center;" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <button class="btn btn-primary" type="submit">登录</button>
+        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">注册</button>
         <p class="mt-5 mb-3 text-muted">&copy; 2020-07-09</p>
     </form>
 </div>
+<!-- 注册模态框开始-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">欢迎注册MYCF</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/user/register}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="recipient-photo" class="col-form-label">头像:
+                        <input type="file" name="file" class="form-control " id="recipient-photo" style="display:none">
+                        <img id="imageview"  width="50px" height="60px" src="img/phono.jpg" alt="请选择头像" /></label>
+                    </div>
+                    <div class="form-group">
+                        <label for="account" class="col-form-label">账号:</label>
+                        <input type="text" name="account" class="form-control" id="account">
+                    </div>
+                    <div class="form-group">
+                        <label for="passwd" class="col-form-label">密码:</label>
+                        <input type="password" name="password" class="form-control" id="passwd">
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="gender" value="男" id="boy" checked > 男
+                        </label>
+                        <label>
+                            <input type="radio" name="gender" value="女" id="girl"> 女
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="col-form-label">手机号:</label>
+                        <input type="text" name="phone" class="form-control" id="phone">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary">提交</button>
+                    </div>
+                </form>
+            </div>
 
-
-
+        </div>
+    </div>
+</div>
+<!-- 注册模态框结束-->
 <div th:replace="~{index::webjars}"></div>
 </body>
 <script type="text/javascript">
-
+    $(function() {
+        $("#recipient-photo").change(function() {
+            var $file = $(this);
+            var objUrl = $file[0].files[0];
+            //获得一个http格式的url路径:mozilla(firefox)||webkit or chrome
+            var windowURL = window.URL || window.webkitURL;
+            //createObjectURL创建一个指向该参数对象(图片)的URL
+            var dataURL = windowURL.createObjectURL(objUrl);
+            $("#imageview").attr("src", dataURL);
+        });
+    });
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('main'));
     // 指定图表的配置项和数据

@@ -24,6 +24,13 @@ public interface IUserLoginMapper {
      */
     UserDo userLogin(UserDo user);
 
+    /**
+     * 用户注册
+     * @param user
+     * @return
+     */
+    Integer userRegister(UserDo user);
+
     @Update("UPDATE  cf_user_info SET landingTime=now() WHERE account=#{account}")
     Integer updateLandingTime(String account);
 }

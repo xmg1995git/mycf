@@ -2,8 +2,7 @@ package com.test.mycf.service.user.impl;
 
 import com.test.mycf.mapper.user.IUserLoginMapper;
 import com.test.mycf.pojo.user.UserDo;
-import com.test.mycf.service.user.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.test.mycf.service.user.IUserLoginService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -13,7 +12,7 @@ import javax.annotation.Resource;
  * @create 2020/7/3 - 20:05
  */
 @Service
-public class UserImpl implements IUserService {
+public class UserImpl implements IUserLoginService {
 
     @Resource
     private IUserLoginMapper iUserLoginMapper;
@@ -21,6 +20,11 @@ public class UserImpl implements IUserService {
     @Override
     public UserDo userLogin(UserDo user) {
         return iUserLoginMapper.userLogin(user);
+    }
+
+    @Override
+    public Integer userRegister(UserDo user) {
+        return iUserLoginMapper.userRegister(user);
     }
 
     @Override

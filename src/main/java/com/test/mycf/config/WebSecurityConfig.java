@@ -69,7 +69,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasAnyRole("ADMIN","SUPER")
                 .antMatchers("/super/**").hasRole("SUPER")
                 .anyRequest()
-                .authenticated();
+                .authenticated()
+                .and()
+            .csrf().disable(); //取消csrf防护
     }
 
     /**
@@ -85,7 +87,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/img/**");
+        web.ignoring().antMatchers("/img/**")
+            .antMatchers("/webjars/**");
+
     }
 
 

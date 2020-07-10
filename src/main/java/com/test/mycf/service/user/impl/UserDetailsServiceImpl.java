@@ -4,11 +4,11 @@ import com.test.mycf.common.RedisCommon;
 import com.test.mycf.common.SessionCommon;
 import com.test.mycf.pojo.user.AuthUser;
 import com.test.mycf.service.user.IAuthUserService;
-import com.test.mycf.service.user.IUserService;
+import com.test.mycf.service.user.IUserLoginService;
+import com.test.mycf.utils.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,8 +23,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author ASUS
@@ -37,13 +35,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Resource
     private IAuthUserService authUserServiceImpl;
     @Resource
-    private IUserService userService;
+    private IUserLoginService userService;
     @Resource
     private RedisTemplate<Object,Object> redisTemplate;
     @Resource
     private HttpSession httpSession;
     @Resource
     private ExecutorService executorService;
+
+    @Resource
+    private RedisUtil redisUtil;
 
 
     @Override
@@ -54,7 +55,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             /**
              * 根据用户名查找用户信息
              */
-            AuthUser authUser = (AuthUser)redisTemplate.opsForValue().get(account);
+            AuthUser authUser = (AuthUser)redisUtil.get(account);
             if (authUser == null){
                 authUser = authUserServiceImpl.getAuthUserByAccount(account);
             }
@@ -77,7 +78,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     }
                 });
                 httpSession.setAttribute(SessionCommon.ACCOUNT,account);
-                redisTemplate.opsForValue().set(account,authUser, RedisCommon.SAVE_TIME, TimeUnit.DAYS);
+                redisUtil.set(account, authUser, RedisCommon.SAVE_TIME);
             }
             return new User(authUser.getAccount(), authUser.getPassword(), grantedAuthorities);
         }

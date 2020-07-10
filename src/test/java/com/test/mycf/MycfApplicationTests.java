@@ -2,9 +2,8 @@ package com.test.mycf;
 
 import com.test.mycf.mapper.user.IUserLoginMapper;
 import com.test.mycf.pojo.user.UserDo;
-import com.test.mycf.service.user.IUserService;
 import com.test.mycf.service.user.impl.UserImpl;
-import javafx.beans.binding.When;
+import com.test.mycf.utils.UUIDUtil;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +39,16 @@ class MycfApplicationTests {
     @Resource
     private IUserLoginMapper iUserLoginMapper;
 
+    @Resource
+    private UUIDUtil uuidUtil;
+
+
+    @Test
+    public void testUUID() {
+        for (int i = 0; i < 8; i++) {
+            System.out.println(uuidUtil.getUUID());
+        }
+    }
     @Test
     public void testMybatis() {
         System.out.println(iUserLoginMapper.getAuthUserByAccount("admin"));

@@ -1,21 +1,42 @@
 package com.test.mycf.controller.user;
 
 import com.test.mycf.common.RedisCommon;
+import com.test.mycf.common.SessionCommon;
+import com.test.mycf.common.UploadCommon;
 import com.test.mycf.pojo.ResponseInfo;
 import com.test.mycf.pojo.user.UserDo;
-import com.test.mycf.service.user.IUserService;
+import com.test.mycf.service.user.IUserLoginService;
 import com.test.mycf.utils.MD5Util;
+import com.test.mycf.utils.UUIDUtil;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.annotation.Resource;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.*;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,11 +51,50 @@ public class UserLoginController {
     private static final Logger LOG = LoggerFactory.getLogger(UserLoginController.class);
 
     @Autowired
-    private IUserService userService;
-
+    private IUserLoginService userService;
     @Autowired
     private RedisTemplate<Object,Object> redisTemplate;
+    @Resource
+    private MD5Util md5Util;
+    @Resource
+    private UUIDUtil uuidUtil;
 
+    @GetMapping("/")
+    public String hello(){
+        return "hello";
+    }
+
+
+    /**
+     * 注册
+     * @return
+     */
+    @PostMapping("/register")
+    public Integer us(@RequestParam("file") MultipartFile file, UserDo user, HttpServletRequest request) throws IOException {
+        // 判断文件是否为空，空则返回失败页面
+        if (file.isEmpty()) {
+            user.setPhoto("");
+        }else{
+            // 获取原文件名
+            String fileName = file.getOriginalFilename();
+            String[] split = fileName.split("\\.");
+            fileName = new StringBuilder()
+                    .append(user.getAccount())
+                    .append(System.currentTimeMillis() % 100)
+                    .append(".")
+                    .append(split[split.length - 1]).toString();
+            // 创建文件实例
+            File filePath = new File(UploadCommon.PATH+fileName);
+            // 写入文件
+            file.transferTo(filePath);
+            user.setPhoto(fileName);
+        }
+        user.setPassword(md5Util.md5DigestAsHex(user.getPassword()));
+        user.setId(uuidUtil.getUUID());
+        user.setCreateTime(new Date());
+        System.out.println(user);
+        return userService.userRegister(user);
+    }
 
     /**
      * 登录
@@ -46,7 +106,7 @@ public class UserLoginController {
         String account, password;
         account = user.getAccount();
         password = user.getPassword();
-        password = MD5Util.md5DigestAsHex(password);
+        password = md5Util.md5DigestAsHex(password);
         UserDo userDo = (UserDo)redisTemplate.opsForValue().get(account);
         if(userDo == null){
             userDo = userService.userLogin(user);
@@ -77,10 +137,6 @@ public class UserLoginController {
         return userDetails;
     }
 
-//    @GetMapping("/aaa")
-//    public Object gdetPrincipal(){
-//        userService.
-//        return principal;
-//    }
+
 
 }

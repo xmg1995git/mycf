@@ -6,6 +6,7 @@ package com.test.mycf.common;
  */
 public class RedisCommon {
 
-    public static final long SAVE_TIME = 5L;
+    // 5天
+    public static final long SAVE_TIME = 60*60*24*5;
     
 }

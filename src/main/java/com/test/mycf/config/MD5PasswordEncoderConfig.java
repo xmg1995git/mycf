@@ -3,11 +3,16 @@ package com.test.mycf.config;
 import com.test.mycf.utils.MD5Util;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.Resource;
+
 /**
  * @author ASUS
  * @create 2020/7/7 - 7:47
  */
 public class MD5PasswordEncoderConfig implements PasswordEncoder {
+
+    @Resource
+    private MD5Util md5Util;
 
     /**
      * 对明文密码加密的方法
@@ -16,7 +21,7 @@ public class MD5PasswordEncoderConfig implements PasswordEncoder {
      */
     @Override
     public String encode(CharSequence charSequence) {
-        return MD5Util.md5DigestAsHex(charSequence);
+        return md5Util.md5DigestAsHex(charSequence);
     }
 
     /**
@@ -27,6 +32,6 @@ public class MD5PasswordEncoderConfig implements PasswordEncoder {
      */
     @Override
     public boolean matches(CharSequence charSequence, String s) {
-        return s.equals(MD5Util.md5DigestAsHex(charSequence));
+        return s.equals(md5Util.md5DigestAsHex(charSequence));
     }
 }

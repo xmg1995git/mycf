@@ -27,4 +27,10 @@
         WHERE
         r.STATUS = '1' AND u.STATUS = '1' AND u.account = #{account}
     </select>
+
+    <insert id="userRegister" parameterType="UserDo">
+        INSERT INTO cf_user_info (id,photo,account,password,gender,phone,createTime)
+        VALUE
+        (#{id},#{photo},#{account},#{password},#{gender},#{phone},#{createTime})
+    </insert>
 </mapper>
