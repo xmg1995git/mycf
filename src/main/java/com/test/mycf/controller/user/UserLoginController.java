@@ -87,12 +87,11 @@ public class UserLoginController {
             File filePath = new File(UploadCommon.PATH+fileName);
             // 写入文件
             file.transferTo(filePath);
-            user.setPhoto(fileName);
+            user.setPhoto(filePath);
         }
         user.setPassword(md5Util.md5DigestAsHex(user.getPassword()));
         user.setId(uuidUtil.getUUID());
         user.setCreateTime(new Date());
-        System.out.println(user);
         return userService.userRegister(user);
     }
 
