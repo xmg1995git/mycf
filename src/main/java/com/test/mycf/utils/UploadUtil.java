@@ -3,11 +3,9 @@ package com.test.mycf.utils;
 import com.test.mycf.common.UploadCommon;
 import com.test.mycf.exception.MyException;
 import com.test.mycf.exception.ResultEnum;
-import com.test.mycf.pojo.ResponseInfo;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 
@@ -17,18 +15,24 @@ import java.io.IOException;
  */
 @Component
 public class UploadUtil {
+
+    public static final byte B_100 = (byte)100;
+    public static final String REGEX = "\\.";
+    public static final String DIAN = ".";
+    public static final byte B_1 = (byte)1;
+
     public String upload(MultipartFile file, String account) throws MyException{
         if (file.isEmpty()) {
             throw new MyException(ResultEnum.UPLOAD_FILE_NULL);
         }
         // 获取原文件名
         String fileName = file.getOriginalFilename();
-        String[] split = fileName.split("\\.");
+        String[] split = fileName.split(REGEX);
         fileName = new StringBuilder()
                 .append(account)
-                .append(System.currentTimeMillis()%100)
-                .append(".")
-                .append(split[split.length - 1]).toString();
+                .append(System.currentTimeMillis()% B_100)
+                .append(DIAN)
+                .append(split[split.length - B_1]).toString();
         File filePath = new File(UploadCommon.PATH+fileName);
         try {
             file.transferTo(filePath);

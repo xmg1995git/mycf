@@ -14,12 +14,12 @@ public enum  ResultEnum {
     /**
      * 注册成功！
      */
-    REGISTER_SUCCESS(10000,"注册成功！"),
+    REGISTER_SUCCESS(10003,"注册成功！"),
 
     /**
      * 请选择上传文件！
      */
-    UPLOAD_FILE_NULL(10000,"请选择上传文件！"),
+    UPLOAD_FILE_NULL(10002,"请选择上传文件！"),
     /**
      * 账号已存在！
      */
