@@ -29,8 +29,8 @@
     </select>
 
     <insert id="userRegister" parameterType="UserDo">
-        INSERT INTO cf_user_info (id,photo,account,password,gender,phone,createTime)
+        INSERT INTO cf_user_info (id,nickname,username,photo,account,password,gender,phone,status,createTime)
         VALUE
-        (#{id},#{photo},#{account},#{password},#{gender},#{phone},#{createTime})
+        (#{id},#{nickname},#{username},#{photo},#{account},#{password},#{gender},#{phone},'1',#{createTime})
     </insert>
 </mapper>

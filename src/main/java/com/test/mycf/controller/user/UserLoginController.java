@@ -3,11 +3,16 @@ package com.test.mycf.controller.user;
 import com.test.mycf.common.RedisCommon;
 import com.test.mycf.common.SessionCommon;
 import com.test.mycf.common.UploadCommon;
+import com.test.mycf.exception.MyException;
+import com.test.mycf.exception.ResultEnum;
 import com.test.mycf.pojo.ResponseInfo;
+import com.test.mycf.pojo.role.RoleDo;
 import com.test.mycf.pojo.user.UserDo;
+import com.test.mycf.service.role.IRoleService;
 import com.test.mycf.service.user.IUserLoginService;
 import com.test.mycf.utils.MD5Util;
 import com.test.mycf.utils.UUIDUtil;
+import com.test.mycf.utils.UploadUtil;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -20,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -30,6 +37,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.io.*;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -37,6 +45,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,9 +64,15 @@ public class UserLoginController {
     @Autowired
     private RedisTemplate<Object,Object> redisTemplate;
     @Resource
+    private IRoleService roleService;
+    @Resource
+    private ExecutorService executorService;
+    @Resource
     private MD5Util md5Util;
     @Resource
     private UUIDUtil uuidUtil;
+    @Resource
+    private UploadUtil uploadUtil;
 
     @GetMapping("/")
     public String hello(){
@@ -70,30 +85,45 @@ public class UserLoginController {
      * @return
      */
     @PostMapping("/register")
-    public Integer us(@RequestParam("file") MultipartFile file, UserDo user, HttpServletRequest request) throws IOException {
-        // 判断文件是否为空，空则返回失败页面
-        if (file.isEmpty()) {
-            user.setPhoto("");
-        }else{
-            // 获取原文件名
-            String fileName = file.getOriginalFilename();
-            String[] split = fileName.split("\\.");
-            fileName = new StringBuilder()
-                    .append(user.getAccount())
-                    .append(System.currentTimeMillis() % 100)
-                    .append(".")
-                    .append(split[split.length - 1]).toString();
-            // 创建文件实例
-            File filePath = new File(UploadCommon.PATH+fileName);
-            // 写入文件
-            file.transferTo(filePath);
-            user.setPhoto(fileName);
+    public ResponseInfo register(@RequestParam("file") MultipartFile file, UserDo user,
+                                  HttpServletRequest request) {
+        user.setAccount(user.getAccount().trim());
+        try {
+            String filePath = uploadUtil.upload(file, user.getAccount());
+            user.setPhoto(filePath);
+        }catch (MyException e){
+            return new ResponseInfo().warning(e.getMessage());
         }
         user.setPassword(md5Util.md5DigestAsHex(user.getPassword()));
         user.setId(uuidUtil.getUUID());
         user.setCreateTime(new Date());
-        System.out.println(user);
-        return userService.userRegister(user);
+        Integer count = null;
+        try {
+           count = userService.userRegister(user);
+        }catch (Exception e) {
+            if (e.getCause() instanceof java.sql.SQLIntegrityConstraintViolationException) {
+                return new ResponseInfo().success(user.getAccount() + ResultEnum.ACCOUNT_IS_EXIST.getMessage());
+            }
+        }
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    RoleDo roleDo = new RoleDo(user.getAccount(), user.getAccount(), new Date());
+                    roleService.saveDefaultUserRole(roleDo);
+                }catch (Exception e){
+                    if(e.getCause() instanceof java.sql.SQLIntegrityConstraintViolationException){
+                        throw new MyException(ResultEnum.ACCOUNT_IS_EXIST);
+                    }
+                }
+            }
+        });
+        if(count == 1){ // success
+            return new ResponseInfo().success(ResultEnum.REGISTER_SUCCESS.getMessage());
+        }else{
+            return new ResponseInfo().warning(ResultEnum.NET_IS_WARNING.getMessage());
+        }
+
     }
 
     /**

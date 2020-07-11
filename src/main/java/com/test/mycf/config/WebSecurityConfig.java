@@ -88,7 +88,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/img/**")
-            .antMatchers("/webjars/**");
+            .antMatchers("/webjars/**")
+            .antMatchers("/user/register");
 
     }
 

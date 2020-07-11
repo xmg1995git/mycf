@@ -13,13 +13,13 @@ import java.util.Date;
 @Data
 public class RoleDo {
 
-    private String id;
+    private String account;
 
     private String role;
 
     private String code;
 
-    private String account;
+    private String createAccount;
 
     private String status;
 
@@ -32,4 +32,13 @@ public class RoleDo {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date updateTime;
+
+    public RoleDo() {
+    }
+
+    public RoleDo(String account, String createAccount, Date createTime) {
+        this.account = account;
+        this.createAccount = createAccount;
+        this.createTime = createTime;
+    }
 }

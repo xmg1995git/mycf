@@ -42,7 +42,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private HttpSession httpSession;
     @Resource
     private ExecutorService executorService;
-
     @Resource
     private RedisUtil redisUtil;
 
