@@ -12,6 +12,11 @@ import lombok.ToString;
 public enum  ResultEnum {
 
     /**
+     * 用户名密码必填！
+     */
+    USER_PASSWORD_WARN(10004,"用户名密码必填！！！"),
+
+    /**
      * 注册成功！
      */
     REGISTER_SUCCESS(10003,"注册成功！"),

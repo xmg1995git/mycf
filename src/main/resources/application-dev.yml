@@ -19,10 +19,23 @@ spring:
 
   thymeleaf:
     cache: false
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+#    static-path-pattern: /static/**
+
+
+#  resources:
+#    static-locations: file:D:\\upload\
+
+
+
+
 
 mybatis:
   config-location: classpath:mybatis/mybatis-config.xml
   mapper-locations: classpath:mybatis/mapper/**/*.xml
 
-logging.level.org.springframework.boot.autoconfigure: ERROR
+logging.level.org.springframework.boot.autoconfigure: info
 debug: off

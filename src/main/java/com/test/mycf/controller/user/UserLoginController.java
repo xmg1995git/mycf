@@ -1,5 +1,6 @@
 package com.test.mycf.controller.user;
 
+import com.test.mycf.common.ConstantCommon;
 import com.test.mycf.common.RedisCommon;
 import com.test.mycf.common.SessionCommon;
 import com.test.mycf.common.UploadCommon;
@@ -7,32 +8,35 @@ import com.test.mycf.exception.MyException;
 import com.test.mycf.exception.ResultEnum;
 import com.test.mycf.pojo.ResponseInfo;
 import com.test.mycf.pojo.role.RoleDo;
+import com.test.mycf.pojo.user.AuthUser;
 import com.test.mycf.pojo.user.UserDo;
 import com.test.mycf.service.role.IRoleService;
 import com.test.mycf.service.user.IUserLoginService;
 import com.test.mycf.utils.MD5Util;
+import com.test.mycf.utils.RedisUtil;
 import com.test.mycf.utils.UUIDUtil;
 import com.test.mycf.utils.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.io.File;
 import java.security.Principal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static com.test.mycf.common.ConstantCommon.B_1;
 
 /**
  * @author ASUS
@@ -44,6 +48,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/user")
 public class UserLoginController {
     private static final Logger LOG = LoggerFactory.getLogger(UserLoginController.class);
+
 
     @Autowired
     private IUserLoginService userService;
@@ -59,11 +64,9 @@ public class UserLoginController {
     private UUIDUtil uuidUtil;
     @Resource
     private UploadUtil uploadUtil;
+    @Resource
+    private RedisUtil redisUtil;
 
-    @GetMapping("/")
-    public String hello(){
-        return "hello";
-    }
 
 
     /**
@@ -71,45 +74,89 @@ public class UserLoginController {
      * @return
      */
     @PostMapping("/register")
-    public ResponseInfo register(@RequestParam("file") MultipartFile file, UserDo user,
-                                  HttpServletRequest request) {
-        user.setAccount(user.getAccount().trim());
+    public ResponseInfo register(@RequestParam("file") MultipartFile file, @Valid UserDo user, BindingResult result) {
+        String photo = "";
         try {
-            String filePath = uploadUtil.upload(file, user.getAccount());
-            user.setPhoto(filePath);
-        }catch (MyException e){
-            return new ResponseInfo().warning(e.getMessage());
-        }
-        user.setPassword(md5Util.md5DigestAsHex(user.getPassword()));
-        user.setId(uuidUtil.getUUID());
-        user.setCreateTime(new Date());
-        Integer count = null;
-        try {
-           count = userService.userRegister(user);
-        }catch (Exception e) {
+            if(result.hasErrors()){
+                return new ResponseInfo().warning(ResultEnum.USER_PASSWORD_WARN.getMessage());
+            }
+            user.setAccount(user.getAccount().trim());
+            photo = uploadUtil.upload(file, user.getAccount());
+            user.setPhoto(photo);
+            user.setPassword(md5Util.md5DigestAsHex(user.getPassword()));
+            user.setId(uuidUtil.getUUID());
+            user.setCreateTime(new Date());
+            Integer count = userService.userRegister(user);
+            if (count == B_1) { // success
+                saveUserRole(user);
+                return new ResponseInfo().success(ResultEnum.REGISTER_SUCCESS.getMessage());
+            }
+        } catch (Exception e) {
+            // 删除图片
+            delUserPhoto(photo);
             if (e.getCause() instanceof java.sql.SQLIntegrityConstraintViolationException) {
                 return new ResponseInfo().success(user.getAccount() + ResultEnum.ACCOUNT_IS_EXIST.getMessage());
             }
         }
+        return new ResponseInfo().warning(ResultEnum.NET_IS_WARNING.getMessage());
+    }
+
+    /**
+     * 删除文件
+     * @param name
+     */
+    private void delUserPhoto(String name){
+        File file = new File(name);
+        if(file.exists()){
+            file.delete();
+        }
+        LOG.info(name + "--成功删除！");
+    }
+
+
+    /**
+     * 保存用户角色
+     * @param user
+     */
+    private void saveUserRole(UserDo user){
         executorService.submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     RoleDo roleDo = new RoleDo(user.getAccount(), user.getAccount(), new Date());
                     roleService.saveDefaultUserRole(roleDo);
-                }catch (Exception e){
-                    if(e.getCause() instanceof java.sql.SQLIntegrityConstraintViolationException){
+                } catch (Exception e) {
+                    if (e.getCause() instanceof java.sql.SQLIntegrityConstraintViolationException) {
                         throw new MyException(ResultEnum.ACCOUNT_IS_EXIST);
                     }
                 }
             }
         });
-        if(count == 1){ // success
-            return new ResponseInfo().success(ResultEnum.REGISTER_SUCCESS.getMessage());
-        }else{
-            return new ResponseInfo().warning(ResultEnum.NET_IS_WARNING.getMessage());
-        }
+    }
 
+
+
+    /**
+     * 获取登录后的Principal（需要登录）
+     */
+    @GetMapping("/getPrincipal")
+    public Object getPrincipal(@AuthenticationPrincipal Principal principal){
+        return principal;
+    }
+
+    /**
+     * 获取登录后的UserDetails（需要登录）
+     */
+    @GetMapping("/getUserDetails")
+    public Object getUserDetails(@AuthenticationPrincipal UserDetails userDetails) {
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        authorities.forEach(item ->{
+            System.out.println(item.getAuthority());
+        });
+        System.out.println(B_1 == 1);
+        int a = 1;
+        System.out.println(a == 1);
+        return userDetails;
     }
 
     /**
@@ -117,7 +164,7 @@ public class UserLoginController {
      * @param user
      * @return
      */
-    @GetMapping("/{account}/{password}")
+    @PostMapping("/{account}/{password}")
     public ResponseInfo userLogin(@ModelAttribute UserDo user){
         String account, password;
         account = user.getAccount();
@@ -137,20 +184,17 @@ public class UserLoginController {
         return new ResponseInfo().success(userDo);
     }
 
-    /**
-     * 获取登录后的Principal（需要登录）
-     */
-    @GetMapping("/getPrincipal")
-    public Object getPrincipal(@AuthenticationPrincipal Principal principal){
-        return principal;
+    @GetMapping("/")
+    public String hello(){
+        return "hello";
     }
 
-    /**
-     * 获取登录后的UserDetails（需要登录）
-     */
-    @GetMapping("/getUserDetails")
-    public Object getUserDetails(@AuthenticationPrincipal UserDetails userDetails) {
-        return userDetails;
+    @GetMapping("/home")
+    public ResponseInfo home(HttpSession session) {
+        AuthUser authUser = (AuthUser) redisUtil.get((String) session.getAttribute(SessionCommon.ACCOUNT));
+        String[] split = authUser.getRole().split(ConstantCommon.ROLE_JOINT);
+        String role = split[split.length - B_1];
+        return new ResponseInfo().success(role);
     }
 
 

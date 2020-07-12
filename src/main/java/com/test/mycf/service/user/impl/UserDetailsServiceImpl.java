@@ -77,6 +77,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     }
                 });
                 httpSession.setAttribute(SessionCommon.ACCOUNT,account);
+                httpSession.setAttribute(SessionCommon.PHOTO,authUser.getUserDo().getPhoto());
                 redisUtil.set(account, authUser, RedisCommon.SAVE_TIME);
             }
             return new User(authUser.getAccount(), authUser.getPassword(), grantedAuthorities);

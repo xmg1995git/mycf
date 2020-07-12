@@ -7,4 +7,5 @@ package com.test.mycf.common;
 public class SessionCommon {
 
     public static final String ACCOUNT = "USER_ACCOUNT";
+    public static final String PHOTO = "USER_PHOTO";
 }

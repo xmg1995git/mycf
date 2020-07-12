@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NegativeOrZero;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -28,7 +29,7 @@ public class UserDo implements Serializable {
     private String username;
 
     // 账号
-    @NotNull(message = "账号不能为空")
+    @NotEmpty (message = "账号不能为空")
     private String account;
 
     // 昵称
@@ -41,7 +42,7 @@ public class UserDo implements Serializable {
     private String phone;
 
     // 密码
-    @NotNull(message = "密码不能为空")
+    @NotEmpty(message = "密码不能为空")
     private String password;
 
     // 头像

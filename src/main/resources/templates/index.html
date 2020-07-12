@@ -5,6 +5,10 @@
 </head>
 <body class="text-center">
 <strong><span th:text="${session.USER_ACCOUNT+'!'}"></span></strong>
+<span th:text="${session.USER_PHOTO}"></span>
+<img th:src="${session.USER_PHOTO}">
+<img src="D:\upload\sy89.jpg ">
+<img src="sy89.jpg " alt="" width="72" height="72">
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="out">
 </form>
@@ -12,7 +16,7 @@
 <a href="/">登录</a>
 
 <h1>我的第一个标题</h1>
-<img class="mb-4" th:src="@{/img/bootstrap-solid.svg}" alt="" width="72" height="72">
+<img class="mb-4" th:src="@{bootstrap-solid.svg}" alt="" width="72" height="72">
 <p>我的第一个段落。</p>
 <hr>
 <div id="app">

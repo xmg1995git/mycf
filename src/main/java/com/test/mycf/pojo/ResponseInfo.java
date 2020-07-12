@@ -18,7 +18,13 @@ public class ResponseInfo implements Serializable {
 
     private Object body;
 
+    /**
+     * 成功 状态码
+     */
     private static final String SUCCESS_CODE = "200";
+    /**
+     * 警告 / 错误 状态码
+     */
     private static final String WARNING_CODE = "400";
 
     public ResponseInfo() {
@@ -35,6 +41,12 @@ public class ResponseInfo implements Serializable {
         return this;
     }
 
+    /**
+     * 成功
+     * 状态码:200
+     * @param body
+     * @return body
+     */
     public ResponseInfo success(Object body) {
         this.code = SUCCESS_CODE;
         this.body = body;
@@ -46,6 +58,12 @@ public class ResponseInfo implements Serializable {
         return this;
     }
 
+    /**
+     * 警告 / 错误
+     * 状态码:400
+     * @param body
+     * @return body
+     */
     public ResponseInfo warning(Object body) {
         this.code = WARNING_CODE;
         this.body = body;

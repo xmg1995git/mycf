@@ -40,7 +40,7 @@ public class UploadUtil {
             e.printStackTrace();
         }
         // 返回图片路径
-        return filePath.toString();
+        return fileName;
     }
 
 

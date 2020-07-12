@@ -20,7 +20,7 @@
 <hr>
 <div id="login" class="text-center">
     <form class="form-signin" th:action="@{/login}" method="post">
-        <img class="mb-4" src="img/jd.jpg" alt="" width="72" height="72">
+        <img class="mb-4" th:src="@{/img/jd.jpg}" alt="" width="72" height="72">
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
         <label for="inputEmail" class="sr-only">Account</label>
         <input name="username" th:value="${session.USER_ACCOUNT}" style="width:200px; text-align: center; "type="text" id="inputEmail" class="form-control " placeholder="Account" required >
@@ -47,7 +47,7 @@
                 </button>
             </div>
             <div class="modal-body" style="height:500px; overflow:scroll;">
-                <form th:action="@{/user/register}" method="post" enctype="multipart/form-data">
+                <form  action="/user/register" method="post" enctype="multipart/form-data" id="form2">
                     <div class="form-group">
                         <label for="recipient-photo" class="col-form-label">头像:
                         <input type="file" name="file" class="form-control " id="recipient-photo" style="display:none">
@@ -82,8 +82,8 @@
                         <input type="text" name="phone" class="form-control" id="phone">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                        <button type="submit" class="btn btn-primary">提交</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close_register">关闭</button>
+                        <button type="submit" class="btn btn-primary" >提交</button>
                     </div>
                 </form>
             </div>
@@ -92,9 +92,12 @@
     </div>
 </div>
 <!-- 注册模态框结束-->
+<!--消息提示框start-->
+
+<!--消息提示框stop-->
 <div th:replace="~{index::webjars}"></div>
 </body>
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
     $(function() {
         $("#recipient-photo").change(function() {
             var $file = $(this);
@@ -105,7 +108,36 @@
             var dataURL = windowURL.createObjectURL(objUrl);
             $("#imageview").attr("src", dataURL);
         });
+
+        $("#register").click(function () {
+            // var targetUrl = $("#form2").attr("action");
+            // alert(targetUrl),
+            // var t = $("#form2").attr("method");
+            // alert(t)
+            var data = new FormData($("#form2")[0]);
+            $.ajax({
+                type:'POST',
+                url:'/user/register',
+                cache: false,    //上传文件不需缓存
+                processData: false, //需设置为false。因为data值是FormData对象，不需要对数据做处理
+                contentType: false, //需设置为false。因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                data:data,
+                dataType:'json',
+                success:function(data){
+                    alert(data.body);
+                    window.location.href = "/";
+                },
+                error:function(data){
+                    alert(data.body)
+                }
+            })
+        });
+        return false;
     });
+
+
+
+
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('main'));
     // 指定图表的配置项和数据
