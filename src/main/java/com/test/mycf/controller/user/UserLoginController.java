@@ -90,10 +90,14 @@ public class UserLoginController {
             if (count == B_1) { // success
                 saveUserRole(user);
                 return new ResponseInfo().success(ResultEnum.REGISTER_SUCCESS.getMessage());
+            }else {
+                // 删除图片
+                delUserPhoto(photo);
             }
         } catch (Exception e) {
-            // 删除图片
-            delUserPhoto(photo);
+            if(ResultEnum.UPLOAD_FILE_NULL.getMessage().equals(e.getMessage())){
+                return new ResponseInfo().warning(ResultEnum.UPLOAD_FILE_NULL.getMessage());
+            }
             if (e.getCause() instanceof java.sql.SQLIntegrityConstraintViolationException) {
                 return new ResponseInfo().success(user.getAccount() + ResultEnum.ACCOUNT_IS_EXIST.getMessage());
             }

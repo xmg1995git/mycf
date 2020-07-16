@@ -6,11 +6,13 @@
     <link href="static/css/login.css" rel="stylesheet">
     <style>
         #login{
-            width: 200px;
+            width: 300px;
             height: 400px;
             margin: 0 auto;
             /*background-color: burlywood;*/
         }
+
+
     </style>
 </head>
 <body>
@@ -20,12 +22,15 @@
 <hr>
 <div id="login" class="text-center">
     <form class="form-signin" th:action="@{/login}" method="post">
-        <img class="mb-4" th:src="@{/img/jd.jpg}" alt="" width="72" height="72">
-        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+        <img class="mb-4" src="/img/mycf.jpg" alt="" width="72" height="72">
+<!--        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>-->
+        <br>
         <label for="inputEmail" class="sr-only">Account</label>
-        <input name="username" th:value="${session.USER_ACCOUNT}" style="width:200px; text-align: center; "type="text" id="inputEmail" class="form-control " placeholder="Account" required >
+        <input name="username" th:value="${session.USER_ACCOUNT}" style="width:300px; text-align: center; "type="text" id="inputEmail" class="form-control " placeholder="Account" required >
+        <br>
         <label for="inputPassword" class="sr-only">Password</label>
-        <input name="password" style="width:200px; text-align: center; " type="password" id="inputPassword" class="form-control " placeholder="Password" required>
+        <input name="password" style="width:300px; text-align: center; " type="password" id="inputPassword" class="form-control " placeholder="Password" required>
+        <br>
         <div class="checkbox mb-3">
             <label>
                 <input type="checkbox" name="remember-me" value="true"> Remember me
@@ -51,7 +56,7 @@
                     <div class="form-group">
                         <label for="recipient-photo" class="col-form-label">头像:
                         <input type="file" name="file" class="form-control " id="recipient-photo" style="display:none">
-                        <img id="imageview"  width="50px" height="60px" src="img/phono.jpg" alt="请选择头像" /></label>
+                        <img id="imageview"  width="50px" height="60px" src="/img/phono.jpg" alt="请选择头像" /></label>
                     </div>
                     <div class="form-group">
                         <label for="nickname" class="col-form-label">昵称:</label>
@@ -83,7 +88,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close_register">关闭</button>
-                        <button type="submit" class="btn btn-primary" >提交</button>
+                        <button type="submit" class="btn btn-primary" id="register">提交</button>
                     </div>
                 </form>
             </div>
@@ -110,14 +115,12 @@
         });
 
         $("#register").click(function () {
-            // var targetUrl = $("#form2").attr("action");
-            // alert(targetUrl),
-            // var t = $("#form2").attr("method");
-            // alert(t)
+            var targetUrl = $("#form2").attr("action");
+            var method = $("#form2").attr("method");
             var data = new FormData($("#form2")[0]);
             $.ajax({
                 type:'POST',
-                url:'/user/register',
+                url:targetUrl,
                 cache: false,    //上传文件不需缓存
                 processData: false, //需设置为false。因为data值是FormData对象，不需要对数据做处理
                 contentType: false, //需设置为false。因为是FormData对象，且已经声明了属性enctype="multipart/form-data"

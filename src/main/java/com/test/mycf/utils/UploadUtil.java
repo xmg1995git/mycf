@@ -39,7 +39,7 @@ public class UploadUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // 返回图片路径
+        // 返回图片名字
         return fileName;
     }
 

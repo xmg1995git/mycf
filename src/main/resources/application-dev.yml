@@ -23,11 +23,11 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
-#    static-path-pattern: /static/**
+    static-path-pattern: /img/**
 
 
-#  resources:
-#    static-locations: file:D:\\upload\
+  resources:
+    static-locations: file:D:\\upload\
 
 
 
