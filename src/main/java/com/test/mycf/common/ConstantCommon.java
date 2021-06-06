@@ -9,4 +9,6 @@ public class ConstantCommon {
     public static final byte B_1 = (byte)1;
 
     public static final String ROLE_JOINT = "-";
+    
+    // 小测试dev
 }
